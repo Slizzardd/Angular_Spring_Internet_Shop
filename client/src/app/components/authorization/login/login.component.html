@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="example-form">
+
+  <div class="error-message" *ngIf="error">
+    <p style="color: red;">{{ error }}</p>
+  </div>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="login" placeholder="Enter your email">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Password</mat-label>
+    <input matInput formControlName="password" type="password" placeholder="Enter your password">
+  </mat-form-field>
+
+  <div class="button-container">
+    <button class="login-button" mat-flat-button color="primary" type="submit">
+      Login
+    </button>
+    <button class="cancel-button" mat-flat-button color="warn" (click)="onNoClick()" type="button">
+      Cancel
+    </button>
+  </div>
+
+</form>

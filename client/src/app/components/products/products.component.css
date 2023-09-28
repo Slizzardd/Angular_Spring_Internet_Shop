@@ -1,0 +1,26 @@
+.container{
+  margin: 0 auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.product{
+  background-color: #ffffff;
+  color: black;
+  margin-left: 50px;
+  margin-top: 10px;
+}
+
+.button{
+  margin-right: 5px;
+}
+
+.image{
+  max-width: 300px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}

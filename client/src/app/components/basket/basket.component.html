@@ -1,0 +1,55 @@
+<div class="container">
+  <form [formGroup]="myForm" (ngSubmit)="addProductById()" class="example-form" *ngIf="canEdit">
+    <mat-form-field class="example-full-width">
+      <mat-label>Product ID</mat-label>
+      <input matInput formControlName="productId">
+    </mat-form-field>
+
+    <div class="buttons">
+      <button class="button" mat-flat-button color="primary" type="submit">
+        Add Product by ID
+      </button>
+    </div>
+  </form>
+
+  <p>The total amount of the basket: {{ totalAmount | currency:"EUR" }}</p>
+  <button class="button" mat-flat-button color="accent" (click)="createOffer()">Create offer</button>
+
+  <table class="basket-table">
+    <thead>
+    <tr>
+      <th>Title and Image</th>
+      <th>Year</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let basket of baskets">
+      <td>
+        <div class="product-info">
+          <div class="product-title">{{ basket.product.title }}</div>
+          <div class="product-image">
+            <img class="image" [src]="basket.product.image" alt="{{ basket.product.title }}">
+          </div>
+        </div>
+      </td>
+      <td>{{ basket.product.year }}</td>
+      <td>{{ basket.product.price | currency:"EUR" }}</td>
+      <td>{{ basket.quantityProductOnBasket }}</td>
+      <td>
+        <button class="button" mat-flat-button color="primary" (click)="addProduct(basket.product.id)">
+          Add One More
+        </button>
+        <button class="button" mat-flat-button color="accent" (click)="deleteOneProduct(basket.product.id)">
+          Delete One Product
+        </button>
+        <button class="button" mat-flat-button color="warn" (click)="deleteAllProduct(basket.product.id)">
+          Delete All
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

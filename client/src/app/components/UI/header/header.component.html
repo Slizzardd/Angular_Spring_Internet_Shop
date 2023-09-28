@@ -1,0 +1,23 @@
+<mat-toolbar color="primary" class="header">
+  <mat-toolbar-row>
+    <div class="toolbar no-select" routerLink="">
+      <mat-icon style="margin-right: 2px">home</mat-icon>
+      <span>Online Shop</span>
+    </div>
+
+    <span class="example-spacer"></span>
+
+    <div class="toolbar no-select">
+      <button mat-flat-button routerLink="">Main</button>
+      <button mat-flat-button routerLink="products" color="accent">Products</button>
+      <ng-container *ngIf="isLogin; else notLoggedInTemplate">
+        <button mat-flat-button (click)="goToBasket(user.id)">Basket</button>
+        <button mat-flat-button (click)="logout()" color="warn">Logout</button>
+      </ng-container>
+      <ng-template #notLoggedInTemplate>
+        <button mat-flat-button (click)="login()">Sign in</button>
+        <button mat-flat-button (click)="registration()" color="accent">Sign up</button>
+      </ng-template>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>

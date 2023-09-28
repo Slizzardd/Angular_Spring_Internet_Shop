@@ -1,0 +1,50 @@
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="product-form">
+  <mat-form-field class="example-full-width">
+    <mat-label>Title</mat-label>
+    <input matInput formControlName="title" placeholder="Enter product title">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Price</mat-label>
+    <input matInput formControlName="price" placeholder="Enter product price">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Year</mat-label>
+    <input matInput formControlName="year" placeholder="Enter product year">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>quantityInWarehouse</mat-label>
+    <input matInput formControlName="quantityInWarehouse" placeholder="Enter quantityInWarehouse">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Category</mat-label>
+    <select matNativeControl required formControlName="category">
+      <option value="laptopsAndComputers">Laptops and Computers</option>
+      <option value="smartphones">Smartphones</option>
+      <option value="productForHome">Product for home</option>
+      <option value="household">Household</option>
+      <option value="instruments">Instruments</option>
+      <option value="plumbing">Plumbing</option>
+      <option value="productForSport">Product for sport</option>
+      <option value="garment">Garment</option>
+      <option value="productForChildren">Product for children</option>
+      <option value="eat">Eat</option>
+      <option value="alcohol">Alcohol</option>
+    </select>
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description" rows="4" placeholder="Enter product description"></textarea>
+  </mat-form-field>
+
+  <div class="button-container">
+    <button class="product-button" mat-flat-button color="primary" type="submit">
+      {{ isNew ? 'Add product' : 'Update product' }}
+    </button>
+    <button class="cancel-button" mat-flat-button color="primary" (click)="onNoClick()" type="button">Cancel</button>
+  </div>
+</form>

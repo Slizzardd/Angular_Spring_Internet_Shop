@@ -1,0 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="registration-form">
+
+  <div *ngIf="error" class="error-message">
+    <p style="color: red;">{{ error }}</p>
+  </div>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>First Name</mat-label>
+    <input matInput formControlName="firstName" placeholder="Enter your first name">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Last Name</mat-label>
+    <input matInput formControlName="lastName" placeholder="Enter your last name">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" placeholder="Enter your email">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Phone Number</mat-label>
+    <input matInput formControlName="phoneNumber" placeholder="Enter your phone number">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Password</mat-label>
+    <input matInput formControlName="password" type="password" placeholder="Enter your password">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Repeat Password</mat-label>
+    <input matInput formControlName="password2" type="password" placeholder="Repeat your password">
+  </mat-form-field>
+
+  <div class="button-container">
+    <button class="registration-button" mat-flat-button color="primary" type="submit">
+      Registration
+    </button>
+    <button class="cancel-button" mat-flat-button color="warn" (click)="onNoClick()" type="button">
+      Cancel
+    </button>
+  </div>
+
+</form>
