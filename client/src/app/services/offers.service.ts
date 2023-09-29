@@ -27,12 +27,6 @@ export class OffersService {
     return this.httpClient.post<IOffer>(`${this.baseUrl}createOffer`, offer, options);
   }
 
-  statusPayment(offer: IOffer){
-    const options = { headers: this.getHeaders() };
-
-    return this.httpClient.post<string>(`${this.baseUrl}startPayment`, offer, options)
-  }
-
   findOfferByLinkForPayment(linkForPayment: string): Observable<IOffer>{
     return this.httpClient.get<IOffer>(`${this.baseUrl}getOfferByLinkForPayment/${linkForPayment}`)
   }

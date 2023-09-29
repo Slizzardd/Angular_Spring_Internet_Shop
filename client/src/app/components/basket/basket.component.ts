@@ -49,7 +49,7 @@ export class BasketComponent implements OnInit {
   offer: IOffer;
 
   loadBasket() {
-    if(localStorage.getItem('auth-token') == null){
+    if (localStorage.getItem('auth-token') == null) {
       this.router.navigate(['/']);
       return;
     }
@@ -143,11 +143,6 @@ export class BasketComponent implements OnInit {
       this.offer = data;
       this.offer.userId = this.userId;
       this.router.navigate([`/offers/payment/${this.offer.linkForPayment}`]);
-      this.offerService.statusPayment(this.offer).subscribe(data => {
-
-      })
-    }, error => {
-      this.openDialog('Log in');
     });
   }
 }

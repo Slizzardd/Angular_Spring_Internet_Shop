@@ -44,30 +44,30 @@ public class OfferRestController {
         }
     }
 
-    /**
-     * Start the payment process for an offer.
-     *
-     * @param actualAuthToken User's authentication token.
-     * @param offerRequestDto DTO containing offer data.
-     * @return ResponseEntity with the result of the payment initiation or an error message.
-     */
-    @PostMapping("/startPayment")
-    public ResponseEntity<?> startPayment(
-            @RequestHeader("Authorization") String actualAuthToken,
-            @RequestBody OfferRequestDto offerRequestDto) {
-        try {
-            offerFacade.startPayment(offerRequestDto, ControllerUtil.getToken(actualAuthToken));
-            return ResponseEntity.ok(null);
-        } catch (AccessException e) {
-            return ResponseEntity.status(403).body(e.toString());
-        } catch (InterruptedException e) {
-            return ResponseEntity.status(500).body("Unexpected error, please try again");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.toString());
-        } catch (JwtException e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-        }
-    }
+//    /**
+//     * Start the payment process for an offer.
+//     *
+//     * @param actualAuthToken User's authentication token.
+//     * @param offerRequestDto DTO containing offer data.
+//     * @return ResponseEntity with the result of the payment initiation or an error message.
+//     */
+//    @PostMapping("/startPayment")
+//    public ResponseEntity<?> startPayment(
+//            @RequestHeader("Authorization") String actualAuthToken,
+//            @RequestBody OfferRequestDto offerRequestDto) {
+//        try {
+//            offerFacade.startPayment(offerRequestDto, ControllerUtil.getToken(actualAuthToken));
+//            return ResponseEntity.ok(null);
+//        } catch (AccessException e) {
+//            return ResponseEntity.status(403).body(e.toString());
+//        } catch (InterruptedException e) {
+//            return ResponseEntity.status(500).body("Unexpected error, please try again");
+//        } catch (EntityNotFoundException e) {
+//            return ResponseEntity.status(404).body(e.toString());
+//        } catch (JwtException e) {
+//            return ResponseEntity.status(401).body(e.getMessage());
+//        }
+//    }
 
     /**
      * Complete the payment process for an offer.

@@ -13,6 +13,9 @@ export class PaymentComponent {
   constructor(private offerService: OffersService, private route: ActivatedRoute, private router: Router) {
     this.offerService.findOfferByLinkForPayment(this.route.snapshot.params['uniqLink']).subscribe(data =>{
       this.offer = data;
+    }, error => {
+      this.router.navigate(["/products"]);
+
     })
   }
   offer: IOffer;

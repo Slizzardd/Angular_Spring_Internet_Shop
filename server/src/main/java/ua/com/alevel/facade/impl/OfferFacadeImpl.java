@@ -58,36 +58,20 @@ public class OfferFacadeImpl implements OfferFacade {
 
             loggerService.commit(LoggerLevel.INFO, "User with ID= " + targetUser.getId() + " CREATE an offer with ID= " + result.getId());
 
+            OfferResponseDto offerResponseDto = new OfferResponseDto(result);
+            Thread thread = new Thread(() -> {
+                try {
+                    startPayment(offerResponseDto.getId());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException();
+                }
+            });
+
+            thread.start();
             return new OfferResponseDto(result);
         } else {
             loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId()
                     + " denied access to CREATE offer for user with ID= " + targetUser.getId());
-            throw new AccessException(ErrorMessageUtil.ACCESS_DENIED_ERROR_MESSAGE);
-        }
-    }
-
-    @Override
-    public void startPayment(OfferRequestDto offerRequestDto, String actualAuthToken) throws AccessException, InterruptedException {
-        User actualUser = userService.findUserByToken(actualAuthToken);
-
-        User targetUser = userService.findUserById(offerRequestDto.getUserId(), actualAuthToken);
-
-        if (isAdmin(actualUser) || Objects.equals(actualUser.getId(), targetUser.getId())) {
-            Thread.sleep(TIME_FOR_SLEEP);
-
-            Offer offer = offerService.findOfferById(offerRequestDto.getId());
-
-            if (offer.getStatusOffer() == StatusOffer.awaitingPayment) {
-                offer.setStatusOffer(StatusOffer.canceled);
-                loggerService.commit(LoggerLevel.INFO, "The order with ID= " + offer.getId()
-                        + "was not paid by the user with ID= " + offer.getUser().getId());
-            }
-
-            offerService.updateOffer(offer);
-
-        } else {
-            loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId()
-                    + " denied access to offer for user with ID= " + targetUser.getId());
             throw new AccessException(ErrorMessageUtil.ACCESS_DENIED_ERROR_MESSAGE);
         }
     }
@@ -120,6 +104,20 @@ public class OfferFacadeImpl implements OfferFacade {
         } else {
             throw new EntityNotFoundException(ErrorMessageUtil.OFFER_NOT_FOUND_ERROR_MESSAGE);
         }
+    }
+
+    private void startPayment(Long offerId) throws InterruptedException {
+            Thread.sleep(TIME_FOR_SLEEP);
+
+            Offer offer = offerService.findOfferById(offerId);
+
+            if (offer.getStatusOffer() == StatusOffer.awaitingPayment) {
+                offer.setStatusOffer(StatusOffer.canceled);
+                loggerService.commit(LoggerLevel.INFO, "The order with ID= " + offer.getId()
+                        + "was not paid by the user with ID= " + offer.getUser().getId());
+            }
+
+            offerService.updateOffer(offer);
     }
 
 
