@@ -2,6 +2,8 @@ package ua.com.alevel.web.dto.request;
 
 public class UserRequestDto extends RequestDto {
 
+
+    private Long id;
     private String email;
     private String password;
     private String firstName;
@@ -12,12 +14,13 @@ public class UserRequestDto extends RequestDto {
 
     public UserRequestDto() { }
 
-    public Boolean getEnabled() {
-        return enabled;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -60,6 +63,14 @@ public class UserRequestDto extends RequestDto {
         this.phoneNumber = phoneNumber;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public String getAuthToken() {
         return authToken;
     }
@@ -70,8 +81,7 @@ public class UserRequestDto extends RequestDto {
 
     @Override
     public String toString() {
-        return "UserRequestDto{" +
-                "email='" + email + '\'' +
+        return "{email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

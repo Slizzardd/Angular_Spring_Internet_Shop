@@ -10,8 +10,6 @@ public class OfferRequestDto extends RequestDto{
 
     private Long userId;
 
-    private UserRequestDto user;
-
     private Long id;
 
     private StatusOffer status;
@@ -19,16 +17,6 @@ public class OfferRequestDto extends RequestDto{
     private String address;
 
     public OfferRequestDto() {
-    }
-
-
-
-    public UserRequestDto getUser() {
-        return user;
-    }
-
-    public void setUser(UserRequestDto user) {
-        this.user = user;
     }
 
     public Long getId() {

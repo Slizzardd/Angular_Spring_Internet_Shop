@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {OffersService} from "../../services/offers.service";
 import {IOffer} from "../../models/offer";
 
@@ -10,7 +10,7 @@ import {IOffer} from "../../models/offer";
 })
 export class PaymentComponent {
 
-  constructor(private offerService: OffersService, private route: ActivatedRoute) {
+  constructor(private offerService: OffersService, private route: ActivatedRoute, private router: Router) {
     this.offerService.findOfferByLinkForPayment(this.route.snapshot.params['uniqLink']).subscribe(data =>{
       this.offer = data;
     })
@@ -18,7 +18,7 @@ export class PaymentComponent {
   offer: IOffer;
   successfulPayment() {
     this.offerService.successfulPayment(this.offer).subscribe(data => {
-
+      this.router.navigate(["/products"]);
     })
   }
 

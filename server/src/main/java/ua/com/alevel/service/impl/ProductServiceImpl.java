@@ -3,6 +3,7 @@ package ua.com.alevel.service.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import ua.com.alevel.exception.EntityNotFoundException;
 import ua.com.alevel.persistence.entity.Product;
 import ua.com.alevel.persistence.repository.ProductRepository;
 import ua.com.alevel.service.ProductService;
@@ -35,7 +36,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findProductById(Long productId) {
-        return productRepository.findById(productId).orElse(null);
+        if (doesProductExist(productId)){
+            return productRepository.findById(productId).orElse(null);
+        }else {
+            throw new EntityNotFoundException("You do send incorrect data");
+        }
     }
 
     @Override

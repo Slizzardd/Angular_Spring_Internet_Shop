@@ -1,8 +1,11 @@
 package ua.com.alevel.web.rest;
 
+import io.jsonwebtoken.JwtException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.alevel.exception.AccessException;
+import ua.com.alevel.exception.EntityExistException;
 import ua.com.alevel.exception.EntityNotFoundException;
 import ua.com.alevel.facade.ProductFacade;
 import ua.com.alevel.util.ControllerUtil;
@@ -30,10 +33,14 @@ public class ProductRestController {
     @PostMapping("/create")
     public ResponseEntity<ProductResponseDto> create(@RequestBody ProductRequestDto productRequestDto,
                                                      @RequestHeader("Authorization") String actualAuthToken) {
-        try {
-            return ResponseEntity.ok(productFacade.create(productRequestDto, ControllerUtil.getToken(actualAuthToken)));
-        } catch (AccessException e) {
-            return ResponseEntity.status(403).body(null);
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                return ResponseEntity.ok(productFacade.create(productRequestDto, ControllerUtil.getToken(actualAuthToken)));
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(null);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -45,11 +52,15 @@ public class ProductRestController {
      */
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody ProductRequestDto productRequestDto,
-                                                     @RequestHeader("Authorization") String actualAuthToken) {
-        try {
-            return ResponseEntity.ok(productFacade.update(productRequestDto, ControllerUtil.getToken(actualAuthToken)));
-        } catch (AccessException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
+                                    @RequestHeader("Authorization") String actualAuthToken) {
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                return ResponseEntity.ok(productFacade.update(productRequestDto, ControllerUtil.getToken(actualAuthToken)));
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -59,12 +70,21 @@ public class ProductRestController {
      * @param productId The ID of the product to deleteUser.
      */
     @DeleteMapping("/delete")
-    public void delete(@RequestHeader("productId") Long productId,
-                       @RequestHeader("Authorization") String actualAuthToken) {
-        try{
-            productFacade.delete(productId, ControllerUtil.getToken(actualAuthToken));
-        }catch (AccessException e){
-            ResponseEntity.status(403);
+    public ResponseEntity<?> delete(@RequestHeader("productId") Long productId,
+                                    @RequestHeader("Authorization") String actualAuthToken) {
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                productFacade.delete(productId, ControllerUtil.getToken(actualAuthToken));
+                return ResponseEntity.ok(null);
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(e.toString());
+            } catch (EntityNotFoundException e) {
+                return ResponseEntity.status(404).body(e.toString());
+            } catch (JwtException e) {
+                return ResponseEntity.status(401).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 

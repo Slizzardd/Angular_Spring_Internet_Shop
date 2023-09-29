@@ -1,6 +1,7 @@
 package ua.com.alevel.web.rest;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -80,7 +81,7 @@ public class UserRestController {
             String token = ControllerUtil.getToken(actualAuthToken);
             try {
                 return ResponseEntity.ok(userFacade.findUserByToken(token));
-            } catch (ExpiredJwtException e) {
+            } catch (JwtException e) {
                 return ResponseEntity.status(401).body("User not authorized: " + e.getMessage());
             }
         } else {
@@ -100,7 +101,7 @@ public class UserRestController {
             userRequestDto.setAuthToken(ControllerUtil.getToken(userRequestDto.getAuthToken()));
             try {
                 return ResponseEntity.ok(userFacade.updateUser(userRequestDto));
-            } catch (ExpiredJwtException e) {
+            } catch (JwtException e) {
                 return ResponseEntity.status(401).body("User not authorized: " + e.getMessage());
             }
         } else {

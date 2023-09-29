@@ -1,14 +1,12 @@
-import { Component } from '@angular/core';
-import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import { RegistrationComponent } from "../../authorization/registration/registration.component";
-import { UsersService } from "../../../services/users.service";
-import { IUser } from "../../../models/user";
-import { LoginComponent } from "../../authorization/login/login.component";
-import { DialogBoxErrorComponent } from "../../dialog-box-error/dialog-box-error.component";
-import { Router } from "@angular/router";
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-import { UserSharedService } from "../../../services/shared/user.shared";
+import {Component} from '@angular/core';
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {RegistrationComponent} from "../../authorization/registration/registration.component";
+import {UsersService} from "../../../services/users.service";
+import {IUser} from "../../../models/user";
+import {LoginComponent} from "../../authorization/login/login.component";
+import {DialogBoxErrorComponent} from "../../dialog-box-error/dialog-box-error.component";
+import {Router} from "@angular/router";
+import {UserSharedService} from "../../../services/shared/user.shared";
 
 @Component({
   selector: 'app-header',
@@ -62,9 +60,9 @@ export class HeaderComponent {
     this.userService.createUser(user).subscribe(() => {
       this.openSuccessDialog("Account created");
     }, error => {
-      if(error.status === 409){
+      if (error.status === 409) {
         this.openErrorDialog("A user with an email/phone number already exists")
-      }else {
+      } else {
         this.openErrorDialog("There was an error, try again");
       }
     });
@@ -78,10 +76,11 @@ export class HeaderComponent {
 
   loginUser(user: IUser) {
     this.userService.loginUser(user).subscribe(() => {
-        this.getActualUser();
-        this.isLogin = true;
-      }, error => {
-      if (error.status === 401){
+      this.getActualUser();
+      this.isLogin = true;
+      location.reload();
+    }, error => {
+      if (error.status === 401) {
         this.openErrorDialog("Incorrect data entered, try again")
       }
     });
@@ -103,10 +102,10 @@ export class HeaderComponent {
   }
 
   private openErrorDialog(text: string) {
-    this.openDialog(DialogBoxErrorComponent, { text }, { width: '500px' });
+    this.openDialog(DialogBoxErrorComponent, {text}, {width: '500px'});
   }
 
   private openSuccessDialog(text: string) {
-    this.openDialog(DialogBoxErrorComponent, { text }, { width: '500px' });
+    this.openDialog(DialogBoxErrorComponent, {text}, {width: '500px'});
   }
 }

@@ -1,10 +1,10 @@
 package ua.com.alevel.web.rest;
 
 import io.jsonwebtoken.JwtException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.alevel.exception.AccessException;
-import ua.com.alevel.exception.EntityExistException;
 import ua.com.alevel.exception.EntityNotFoundException;
 import ua.com.alevel.exception.QuantityOfProductException;
 import ua.com.alevel.facade.ProductFacade;
@@ -31,16 +31,21 @@ public class BasketRestController {
      * @param basketRequestDto The request body containing product and user information.
      */
     @PostMapping("/addProductToBasket")
-    public void addProductToBasket(@RequestHeader("Authorization") String actualAuthToken,
-                                   @RequestBody BasketRequestDto basketRequestDto) {
-        try {
-            productFacade.addProductToBasket(ControllerUtil.getToken(actualAuthToken), basketRequestDto);
-        } catch (EntityExistException e) {
-            ResponseEntity.status(401).body(e.getMessage());
-        } catch (EntityNotFoundException | QuantityOfProductException e) {
-            ResponseEntity.status(404).body(e.getMessage());
-        } catch (AccessException e) {
-            ResponseEntity.status(403).body(e.getMessage());
+    public ResponseEntity<?> addProductToBasket(@RequestHeader("Authorization") String actualAuthToken,
+                                                @RequestBody BasketRequestDto basketRequestDto) {
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                productFacade.addProductToBasket(ControllerUtil.getToken(actualAuthToken), basketRequestDto);
+                return ResponseEntity.ok().body(null);
+            } catch (EntityNotFoundException | QuantityOfProductException e) {
+                return ResponseEntity.status(404).body(e.getMessage());
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            } catch (JwtException e) {
+                return ResponseEntity.status(401).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -51,14 +56,21 @@ public class BasketRestController {
      * @param basketRequestDto The request body containing product and user information.
      */
     @PostMapping("/deleteOneProductFromBasket")
-    public void deleteOneProductFromBasket(@RequestHeader("Authorization") String actualAuthToken,
-                                           @RequestBody BasketRequestDto basketRequestDto) {
-        try {
-            productFacade.deleteOneProductFromBasket(ControllerUtil.getToken(actualAuthToken), basketRequestDto);
-        } catch (EntityNotFoundException e) {
-            ResponseEntity.status(404).body(e.getMessage());
-        } catch (AccessException e) {
-            ResponseEntity.status(403).body(e.getMessage());
+    public ResponseEntity<?> deleteOneProductFromBasket(@RequestHeader("Authorization") String actualAuthToken,
+                                                        @RequestBody BasketRequestDto basketRequestDto) {
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                productFacade.deleteOneProductFromBasket(ControllerUtil.getToken(actualAuthToken), basketRequestDto);
+                return ResponseEntity.ok(null);
+            } catch (EntityNotFoundException e) {
+                return ResponseEntity.status(404).body(e.getMessage());
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            } catch (JwtException e) {
+                return ResponseEntity.status(401).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -69,16 +81,24 @@ public class BasketRestController {
      * @param basketRequestDto The request body containing user information.
      */
     @PostMapping("/deleteAllProductFromBasket")
-    public void deleteAllProductFromBasket(@RequestHeader("Authorization") String actualAuthToken,
-                                           @RequestBody BasketRequestDto basketRequestDto) {
-        try {
-            productFacade.deleteAllProductsFromBasket(ControllerUtil.getToken(actualAuthToken), basketRequestDto);
-        } catch (EntityNotFoundException e) {
-            ResponseEntity.status(404).body(e.getMessage());
-        } catch (AccessException e) {
-            ResponseEntity.status(403).body(e.getMessage());
+    public ResponseEntity<?> deleteAllProductFromBasket(@RequestHeader("Authorization") String actualAuthToken,
+                                                        @RequestBody BasketRequestDto basketRequestDto) {
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                productFacade.deleteAllProductsFromBasket(ControllerUtil.getToken(actualAuthToken), basketRequestDto);
+                return ResponseEntity.ok(null);
+            } catch (EntityNotFoundException e) {
+                return ResponseEntity.status(404).body(e.getMessage());
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            } catch (JwtException e) {
+                return ResponseEntity.status(401).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
     /**
      * Find all products in the user's basket by user ID.
      *
@@ -89,15 +109,19 @@ public class BasketRestController {
     @GetMapping("/findAllProductByUserBasket/{id}")
     public ResponseEntity<?> findAllProductByUserBasket(@RequestHeader("Authorization") String actualAuthToken,
                                                         @PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(productFacade.findAllProductsInUserBasket(
-                    ControllerUtil.getToken(actualAuthToken), id));
-        } catch (EntityNotFoundException | NullPointerException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (AccessException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
-        } catch (JwtException e) {
-            return ResponseEntity.status(401).body(e.getMessage());
+        if (ControllerUtil.authCheck(actualAuthToken)) {
+            try {
+                return ResponseEntity.ok(productFacade.findAllProductsInUserBasket(
+                        ControllerUtil.getToken(actualAuthToken), id));
+            } catch (EntityNotFoundException | NullPointerException e) {
+                return ResponseEntity.status(404).body(e.getMessage());
+            } catch (AccessException e) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            } catch (JwtException e) {
+                return ResponseEntity.status(401).body(e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }

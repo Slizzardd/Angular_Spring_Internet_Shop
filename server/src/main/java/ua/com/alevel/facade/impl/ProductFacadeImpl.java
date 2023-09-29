@@ -79,7 +79,6 @@ public class ProductFacadeImpl implements ProductFacade {
         User actualUser = userService.findUserByToken(authToken);
 
         if (isAdmin(userService.findUserByToken(authToken))) {
-
             deletingRelationWhenDeletingProduct(productId, authToken);
 
             productService.deleteProduct(productId);
@@ -94,11 +93,7 @@ public class ProductFacadeImpl implements ProductFacade {
 
     @Override
     public ProductResponseDto findById(Long productId) throws EntityNotFoundException {
-        Product product = productService.findProductById(productId);
-        if (product == null) {
-            throw new EntityNotFoundException("Entity not found, incorrect id");
-        }
-        return new ProductResponseDto(product);
+        return new ProductResponseDto(productService.findProductById(productId));
     }
 
     @Override
@@ -146,26 +141,23 @@ public class ProductFacadeImpl implements ProductFacade {
         User actualUser = userService.findUserByToken(authToken);
         User targetUser = userService.findUserById(basketRequestDto.getUserId(), authToken);
 
-        if (productService.doesProductExist(basketRequestDto.getProductId())) {
-            if (isAdminOrIsOwner(actualUser, targetUser)) {
-                Product product = productService.findProductById(basketRequestDto.getProductId());
+        if (isAdminOrIsOwner(actualUser, targetUser)) {
+            Product product = productService.findProductById(basketRequestDto.getProductId());
 
-                if (product.getQuantity() >= 1L) {
-                    userService.updateUser(userService.addProductToUserBasket(targetUser,
-                            basketRequestDto.getProductId()), authToken);
-                    product.setQuantity(removeQuantity(product.getQuantity(), 1L));
-                    productService.updateProduct(product);
-                }
-
+            if (product.getQuantity() >= 1L) {
+                userService.updateUser(userService.addProductToUserBasket(targetUser,
+                        basketRequestDto.getProductId()), authToken);
+                product.setQuantity(removeQuantity(product.getQuantity(), 1L));
+                productService.updateProduct(product);
+            }else {
                 throw new QuantityOfProductException("The product is out of stock");
-            } else {
-                loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId()
-                        + " denied access to ADD product to basket of user with ID= " + targetUser.getId());
-
-                throw new AccessException("You do not have permission for this data");
             }
+
         } else {
-            throw new EntityNotFoundException("You sent an incorrect id");
+            loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId()
+                    + " denied access to ADD product to basket of user with ID= " + targetUser.getId());
+
+            throw new AccessException("You do not have permission for this data");
         }
     }
 
@@ -174,22 +166,18 @@ public class ProductFacadeImpl implements ProductFacade {
         User actualUser = userService.findUserByToken(authToken);
         User targetUser = userService.findUserById(basketRequestDto.getUserId(), authToken);
 
-        if (basketRequestDto.getProductId() != null) {
-            if (isAdminOrIsOwner(actualUser, targetUser)) {
-                Product product = productService.findProductById(basketRequestDto.getProductId());
-                product.setQuantity(addQuantity(product.getQuantity(), 1L));
+        if (isAdminOrIsOwner(actualUser, targetUser)) {
+            Product product = productService.findProductById(basketRequestDto.getProductId());
+            product.setQuantity(addQuantity(product.getQuantity(), 1L));
 
-                userService.updateUser(userService.deleteOneProductFromBasket(
-                        targetUser, basketRequestDto.getProductId()), authToken);
+            userService.updateUser(userService.deleteOneProductFromBasket(
+                    targetUser, basketRequestDto.getProductId()), authToken);
 
-                productService.updateProduct(product);
-            } else {
-                loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId()
-                        + " denied access to DELETE product from basket of user with ID= " + targetUser.getId());
-                throw new AccessException("You do not have permission for this data");
-            }
+            productService.updateProduct(product);
         } else {
-            throw new EntityNotFoundException("You sent an incorrect id");
+            loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId()
+                    + " denied access to DELETE product from basket of user with ID= " + targetUser.getId());
+            throw new AccessException("You do not have permission for this data");
         }
     }
 
@@ -199,23 +187,20 @@ public class ProductFacadeImpl implements ProductFacade {
         User actualUser = userService.findUserByToken(authToken);
         User targetUser = userService.findUserById(basketRequestDto.getUserId(), authToken);
 
-        if (basketRequestDto.getProductId() != null) {
-            if (isAdminOrIsOwner(actualUser, targetUser)) {
+        if (isAdminOrIsOwner(actualUser, targetUser)) {
 
-                String basket = targetUser.getProductsId();
-                userService.updateUser(userService.deleteAllProductFromBasket(targetUser, basketRequestDto.getProductId()), authToken);
-                Product product = productService.findProductById(basketRequestDto.getProductId());
+            Product product = productService.findProductById(basketRequestDto.getProductId());
 
-                product.setQuantity(addQuantity(
-                        product.getQuantity(), countOccurrences(basket, basketRequestDto.getProductId().toString())));
-                productService.updateProduct(product);
-            } else {
-                loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId() + " denied access to DELETE all products with ID= "
-                        + basketRequestDto.getProductId() + " from basket of user with ID= " + targetUser.getId());
-                throw new AccessException("You do not have permission for this operation");
-            }
+            String basket = targetUser.getProductsId();
+            userService.updateUser(userService.deleteAllProductFromBasket(targetUser, basketRequestDto.getProductId()), authToken);
+
+            product.setQuantity(addQuantity(
+                    product.getQuantity(), countOccurrences(basket, basketRequestDto.getProductId().toString())));
+            productService.updateProduct(product);
         } else {
-            throw new EntityNotFoundException("You sent an incorrect id");
+            loggerService.commit(LoggerLevel.WARN, "User with ID= " + actualUser.getId() + " denied access to DELETE all products with ID= "
+                    + basketRequestDto.getProductId() + " from basket of user with ID= " + targetUser.getId());
+            throw new AccessException("You do not have permission for this operation");
         }
     }
 
@@ -269,7 +254,7 @@ public class ProductFacadeImpl implements ProductFacade {
 
     public static Long countOccurrences(String input, String target) {
         Long count = 0L;
-        if (input == null){
+        if (input == null) {
             return count;
         }
         String[] numbers = input.split(",\\s*");

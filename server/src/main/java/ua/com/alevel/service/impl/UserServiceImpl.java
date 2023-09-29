@@ -1,5 +1,6 @@
 package ua.com.alevel.service.impl;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -76,6 +77,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserById(Long id, String actualAuthToken) throws EntityNotFoundException {
+        if(id == null){
+            throw new EntityNotFoundException("WHAT???");
+        }
         checkExist(id);
         return userRepository.findById(id).orElse(null);
     }
@@ -91,7 +95,7 @@ public class UserServiceImpl implements UserService {
             String email = JwtUtil.extractUsername(actualAuthToken);
             return userRepository.findByEmail(email).orElse(null);
         } catch (MalformedJwtException e) {
-            throw new AuthorizationException(e.toString());
+            throw new JwtException(e.toString());
         }
     }
 
